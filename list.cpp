@@ -1,39 +1,41 @@
-#include"list.h"
+#include "list.h"
+
 struct ListItem
 {
     int value;
     ListItem* next;
     ListItem* previous;
-}
+};
+
 class List::ListIm
 {
 
 public:
-    ListIm(): head(NULL), tail(NULL) {}
+    ListIm(): head(0), tail(0) {}
     ListIm(const ListIm& l);
     ~ListIm();
-    void show();
     void pushFront(int value);
     void pushBack(int value);
     void pushSpis(int value);
-    void addElement(ListIm*, int i);
+    void addElement(ListIm*pushSpis, int index);
     int removeFront();
     int removeBack();
-    bool nextDatum(bool first, int &value) const;
+    bool nextDatum(bool first, int &datum) const;
 private:
     ListItem* head;
     ListItem* tail;
 };
 
-
+List::List() : pimpl(0)
+{
+	pimpl = new ListIm;
+}
 
 List::~List()
 {
     delete pimpl;
     pimpl=0;
-
 }
-
 
 void List::pushFront(int value)
 {
@@ -47,11 +49,10 @@ void List::pushSpis(int value)
 {
     return pimpl->pushSpis(value);
 }
-void List::addElement(ListIm *pushSpis, int index)
+void List::addElement(List *pushSpis, int index)
 {
-    return pimpl->addElement(&pushSpis,index);
+    return pimpl->addElement(pushSpis->pimpl,index);
 }
-
 int List::removeFront()
 {
    return pimpl->removeFront();
@@ -62,22 +63,22 @@ int List::removeBack()
 }
 
 
-List::List(const List& l):   pimpl(0)
+List::List(const List& l):pimpl(0)
 {
     pimpl = new ListIm(*(l.pimpl));
 
 
 }
 
-bool List::nextDatum(bool first, int &value) const
+bool List::nextDatum(bool first, int &datum) const
 {
-    return pimpl->nextDatum(first, value);
+    return pimpl->nextDatum(first, datum);
 }
 void List::ListIm::pushFront(int value)
 {
     ListItem* curentItem = new ListItem;
     curentItem->value = value;
-    curentItem->previous = NULL;
+    curentItem->previous = 0;
     curentItem->next = head;
     if(head)
         head->previous = curentItem;
@@ -91,7 +92,7 @@ void List::ListIm::pushBack(int value)
     ListItem* curentItem = new ListItem;
     curentItem->value = value;
     curentItem->previous = tail;
-    curentItem->next = NULL;
+    curentItem->next = 0;
     if(tail)
         tail->next = curentItem;
     else
@@ -103,7 +104,7 @@ void List::ListIm::pushSpis(int value)
     ListItem* curentItem = new ListItem;
     curentItem->value = value;
     curentItem->previous = tail;
-    curentItem->next = NULL;
+    curentItem->next = 0;
     if(tail)
         tail->next = curentItem;
     else
@@ -135,14 +136,14 @@ int List::ListIm::removeFront()
         int value = head->value;
         ListItem* itemToRemove = head;
         if(head->next)
-            head->next->previous = NULL;
+            head->next->previous = 0;
         else
-            tail = NULL;
+            tail = 0;
         head = head->next;
         delete itemToRemove;
         return value;
     }
-
+return 0;
 }
 int List::ListIm::removeBack()
 {
@@ -151,17 +152,17 @@ int List::ListIm::removeBack()
         int value = tail->value;
         ListItem* itemToRemove = tail;
         if(tail->previous)
-            tail->previous->next = NULL;
+            tail->previous->next = 0;
         else
-            head = NULL;
+            head = 0;
         tail = tail->previous;
         delete itemToRemove;
         return value;
     }
-
+return 0;
 }
 
-List::ListIm::ListIm(const ListIm& A):head(NULL), tail(NULL)
+List::ListIm::ListIm(const ListIm& A):head(0), tail(0)
 {
     ListItem* m = A.head;
     while(m)
@@ -179,18 +180,19 @@ List::ListIm::~ListIm()
         head = head->next;
         delete m;
     }
-    head = tail = NULL;
+    head = tail = 0;
 }
 
 bool List::ListIm::nextDatum(bool first, int &value) const
 {
     static ListItem *cur;
     if (first)
-        cur=root;
+        cur=head;
+
     bool result=cur!=0;
     if (result)
     {
-        datum=cur->datum;
+        value=cur->value;
         cur=cur->next;
     }
     return result;
